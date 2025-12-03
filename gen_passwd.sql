@@ -1,12 +1,12 @@
-create function gen_passwd()
+create function gen_passwd(pw_len integer default 16)
 returns text
 LANGUAGE SQL
 AS $$
 with init(len, arr) as (
   -- edit password length and possible characters here
-  select 16, string_to_array('123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ-%$&?<>.,', null)
+  select pw_len, string_to_array('123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ-%$&?<>.,', null)
 ), arrlen(l) as (
-  select count(1)
+  select count(*)
   from (select unnest(arr) from init) _
 ), indexes(i) as (
   select 1 + int4(random() * (l - 1))
