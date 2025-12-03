@@ -1,0 +1,20 @@
+create function gen_passwd()
+returns text
+LANGUAGE SQL
+AS $$
+with init(len, arr) as (
+  -- edit password length and possible characters here
+  select 16, string_to_array('123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ-%$&?<>.,', null)
+), arrlen(l) as (
+  select count(1)
+  from (select unnest(arr) from init) _
+), indexes(i) as (
+  select 1 + int4(random() * (l - 1))
+  from arrlen, (select generate_series(1, len) from init) _
+), res as (
+  select array_to_string(array_agg(arr[i]), '') as password
+  from init, indexes
+)
+select password
+from res
+$$;
