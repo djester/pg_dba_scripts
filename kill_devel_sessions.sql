@@ -1,4 +1,4 @@
-create function kill_devel_sessions() returns void as $$
+create or replace function kill_devel_sessions() returns void as $$
 select pg_terminate_backend(pid) 
   from pg_stat_activity pga
  where backend_type = 'client backend' 
